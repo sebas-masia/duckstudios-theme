@@ -1,0 +1,74 @@
+/* Results section styles */
+.results-section {
+    padding: 5rem 0;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+    background: #111111;
+}
+
+.results-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Restore blobs in results section */
+.results-section .site-background {
+    opacity: 0.6;
+    display: block;
+}
+
+/* Case Studies section styles */
+.case-studies-section {
+    padding: 5rem 0;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+    background: #111111;
+}
+
+.case-studies-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Restore blobs in case studies section */
+.case-studies-section .site-background {
+    opacity: 0.6;
+    display: block;
+}
+
+/* Positioning for the blobs in the results section */
+.results-section .site-background .blob-blue {
+    bottom: -250px;
+    left: 10%;
+    opacity: 0.4;
+}
+
+/* Positioning for the blobs in case studies section */
+.case-studies-section .site-background .blob-yellow {
+    bottom: -150px;
+    right: 15%;
+    opacity: 0.35;
+}
+
+/* Ensure proper spacing between sections */
+.results-section + .case-studies-section {
+    padding-top: 2rem;
+    margin-top: -2rem;
+}
+
+/* Case study cards */
+.case-study-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 30px;
+    position: relative;
+    z-index: 5;
+    transition: all 0.3s ease;
+}
+
+.case-study-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+} 

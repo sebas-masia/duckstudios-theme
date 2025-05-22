@@ -1,0 +1,68 @@
+/* 
+ * Section Transitions CSS
+ * This file handles transitions between sections to create visual continuity
+ */
+
+/* Global section settings */
+section {
+    position: relative;
+    overflow: visible !important; /* Allow overflow for blobs to be visible */
+    z-index: 1;
+    background: #111111; /* Consistent background */
+}
+
+/* Restore some space between sections - no negative margins */
+section {
+    padding: 5rem 0;
+    margin: 0;
+    border: none;
+}
+
+/* Make gradient blobs visible */
+.gradient-blob {
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+    transition: none;
+    animation: none;
+}
+
+/* Ensure all content appears above the gradient blobs */
+.container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Remove existing gradients that might interfere */
+.gradient-bg.gradient-1,
+.gradient-bg.gradient-2 {
+    display: none;
+}
+
+/* No transitions between sections */
+section + section {
+    margin-top: 0;
+}
+
+/* Disable any before/after effects that could cause lines */
+section:before,
+section:after {
+    display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    /* Reduce overlap on mobile */
+    .hero-section + .client-logos-section,
+    .client-logos-section + .services-section,
+    .services-section + .results-section,
+    .results-section + .case-studies-section,
+    .case-studies-section + .testimonials-section,
+    .testimonials-section + .choose-us-section,
+    .choose-us-section + .methodology-section,
+    .methodology-section + .faq-section,
+    .faq-section + .contact-section {
+        margin-top: -25px;
+        padding-top: 65px;
+    }
+} 

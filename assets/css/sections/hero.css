@@ -1,0 +1,166 @@
+.client-logos-section {
+    padding: 3rem 0;
+    background: #111111;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+.client-logos-section .container {
+    position: relative;
+    max-width: 1320px;
+    z-index: 2;
+}
+
+.logos-slider {
+    position: relative;
+    padding: 0 60px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.logos-track {
+    display: flex;
+    align-items: center;
+    transition: transform 0.5s ease-in-out;
+}
+
+.logo-item {
+    flex: 0 0 33.33%;
+    min-width: 33.33%;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Ticker container with hidden overflow */
+.logos-ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* The moving ticker */
+.logos-ticker {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker-scroll 30s linear infinite;
+    /* Start with logos already visible */
+    transform: translateX(0);
+}
+
+/* Animation keyframes for continuous scrolling */
+@keyframes ticker-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%); /* Only move by 50% since we have duplicates */
+    }
+}
+
+/* Pause on hover */
+.logos-ticker-wrap:hover .logos-ticker {
+    animation-play-state: paused;
+}
+
+/* Individual logo style */
+.client-logo {
+    max-width: 180px;
+    max-height: 90px;
+    width: auto;
+    height: auto;
+    margin: 0 40px;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    object-fit: contain;
+}
+
+.client-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--color-white, #ffffff);
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary, #222);
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.slider-nav:hover {
+    background: var(--color-primary, #ffc700);
+    color: var(--color-white, #fff);
+}
+
+.prev-logo {
+    left: 10px;
+}
+
+.next-logo {
+    right: 10px;
+}
+
+@media (max-width: 992px) {
+    .logo-item {
+        flex: 0 0 50%;
+        min-width: 50%;
+    }
+    
+    .client-logo {
+        max-width: 160px;
+        max-height: 80px;
+        margin: 0 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-item {
+        flex: 0 0 100%;
+        min-width: 100%;
+    }
+    
+    .client-logo {
+        max-width: 140px;
+        max-height: 70px;
+        margin: 0 20px;
+    }
+    
+    .logos-slider {
+        padding: 0 40px;
+    }
+}
+
+/* Make the blob visible in client logos section */
+.client-logos-section .site-background {
+    display: block;
+    opacity: 0.6;
+}
+
+.client-logos-section .site-background .gradient-blob {
+    opacity: 0.2;
+}
+
+.client-logos-section .site-background .blob-blue {
+    top: -250px;
+    left: 20%;
+} 
