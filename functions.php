@@ -579,3 +579,67 @@ function duck_studios_contact_meta_box_callback($post) {
     }
     echo '</table>';
 }
+
+/**
+ * Add WhatsApp floating button
+ */
+function duck_studios_add_whatsapp_button() {
+    ?>
+    <style>
+        .ds-whatsapp-btn {
+            position: fixed !important;
+            display: flex !important;
+            width: 60px !important;
+            height: 60px !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            background-color: #25D366 !important;
+            color: #FFF !important;
+            border-radius: 50% !important;
+            text-align: center !important;
+            justify-content: center !important;
+            align-items: center !important;
+            font-size: 32px !important;
+            z-index: 100000 !important;
+            animation: whatsapp-pulse 1.5s ease-in-out infinite !important;
+        }
+        
+        @keyframes whatsapp-pulse {
+            0% {
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.9);
+            }
+            
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            
+            100% {
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+        
+        .ds-whatsapp-btn i {
+            color: white !important;
+            font-size: 32px !important;
+        }
+        
+        @media (max-width: 767px) {
+            .ds-whatsapp-btn {
+                width: 55px !important;
+                height: 55px !important;
+            }
+            
+            .ds-whatsapp-btn i {
+                font-size: 30px !important;
+            }
+        }
+    </style>
+    <a href="https://wa.me/50671049909" class="ds-whatsapp-btn" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+    <?php
+}
+add_action('wp_footer', 'duck_studios_add_whatsapp_button', 999);

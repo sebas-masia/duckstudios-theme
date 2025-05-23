@@ -1694,3 +1694,106 @@ p {
     flex: 0 0 50%;
   }
 }
+
+/* WhatsApp Sticky Button */
+.whatsapp-sticky-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none; /* Allow clicks to pass through to the button */
+    width: auto;
+    height: auto;
+}
+
+.whatsapp-sticky {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: #fff !important; /* Force white color */
+    border-radius: 50%;
+    display: flex !important; /* Force display */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    opacity: 1 !important; /* Force visibility */
+    visibility: visible !important; /* Ensure visibility */
+    pointer-events: auto; /* Make the button clickable */
+}
+
+.whatsapp-sticky i {
+    font-size: 32px;
+    color: #fff !important;
+}
+
+.whatsapp-sticky:hover {
+    transform: scale(1.1);
+    color: #fff !important;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* Animation for extra attention */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+.whatsapp-sticky {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive adjustments for tablets */
+@media (max-width: 768px) {
+    .whatsapp-sticky-wrapper {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .whatsapp-sticky {
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 576px) {
+    .whatsapp-sticky-wrapper {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .whatsapp-sticky {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .whatsapp-sticky i {
+        font-size: 26px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+    .whatsapp-sticky-wrapper {
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .whatsapp-sticky {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .whatsapp-sticky i {
+        font-size: 24px;
+    }
+}
