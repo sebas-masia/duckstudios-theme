@@ -432,54 +432,68 @@ p {
   overflow: visible;
 }
 
-/* Results showcase - grid layout */
+/* Results showcase */
 .results-showcase {
   margin: 40px 0;
   position: relative;
 }
 
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  margin: 30px 0;
+/* Results carousel styling */
+.results-carousel {
+  position: relative;
+  margin: 40px 0;
+  overflow: hidden;
 }
 
-.result-image-card {
+.carousel-container {
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  background-color: #1a1a1a;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.result-image-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-}
-
-.result-image-card img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background-color: transparent;
+  border: none;
+}
+
+.carousel-slide {
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.carousel-item {
+  flex: 0 0 33.333%;
+  min-width: 33.333%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: transparent;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
   display: block;
-  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  object-fit: cover;
+  min-height: 200px;
+  background-color: white;
 }
 
 /* Stats card styling */
 .result-stats-card {
+  width: 100%;
+  border-radius: 8px;
   overflow: hidden;
-  border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  background-color: #1a1a1a;
-  display: flex;
-  flex-direction: column;
+  background-color: #ffffff;
+  color: #111;
 }
 
 .stats-header {
   display: flex;
   justify-content: space-between;
-  padding: 0;
 }
 
 .stat-block {
@@ -493,10 +507,12 @@ p {
 
 .stat-block.blue {
   background-color: #0066ff;
+  color: white;
 }
 
 .stat-block.red {
   background-color: #ff3b30;
+  color: white;
 }
 
 .stat-block.yellow {
@@ -505,14 +521,14 @@ p {
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   display: block;
   margin-bottom: 5px;
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   display: block;
 }
@@ -522,13 +538,49 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 15px;
+  background-color: white;
 }
 
 .stats-graph img {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  display: block;
+  border-radius: 0;
+  min-height: auto;
+  box-shadow: none;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.carousel-nav:hover {
+  background-color: #ffc700;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev {
+  left: 10px;
+}
+
+.carousel-nav.next {
+  right: 10px;
 }
 
 /* Updated metrics grid */
@@ -583,6 +635,81 @@ p {
 
 .metric-item:nth-child(6) .metric-value {
   color: #FF2C55; /* Red for brand loyalty */
+}
+
+@media (max-width: 1200px) {
+  .carousel-item {
+    flex: 0 0 33.333%;
+    min-width: 33.333%;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 992px) {
+  .carousel-item {
+    flex: 0 0 50%;
+    min-width: 50%;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .metric-value {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-item {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .metric-label {
+    font-size: 14px;
+  }
+  
+  .metric-value {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .stat-value {
+    font-size: 16px;
+  }
+  
+  .carousel-nav {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 576px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 15px;
+  }
+  
+  .metric-value {
+    font-size: 1.4rem;
+  }
 }
 
 /* Case study card updates */
@@ -1085,6 +1212,94 @@ p {
   .contact-subtitle {
     font-size: 1.2rem;
   }
+  
+  .carousel-item {
+    flex: 0 0 100%;
+    padding: 0 10px;
+  }
+  
+  .result-stats-card {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .stats-header {
+    flex-wrap: wrap;
+  }
+  
+  .stat-block {
+    padding: 10px 5px;
+  }
+  
+  .stat-label {
+    font-size: 10px;
+  }
+  
+  .stat-value {
+    font-size: 14px;
+  }
+  
+  .carousel-nav {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .carousel-nav.prev {
+    left: 10px;
+  }
+  
+  .carousel-nav.next {
+    right: 10px;
+  }
+  
+  .carousel-item img {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .giant-number {
+    font-size: 3.5rem;
+  }
+  
+  .large-text {
+    font-size: 1.1rem;
+  }
+
+  .contact-form {
+    padding: 20px;
+  }
+  
+  .result-stats-card {
+    max-width: 280px;
+  }
+  
+  .stats-header {
+    flex-wrap: wrap;
+  }
+  
+  .stat-label {
+    font-size: 9px;
+  }
+  
+  .stat-value {
+    font-size: 12px;
+  }
 }
 
 /* Footer */
@@ -1338,11 +1553,23 @@ p {
     flex-direction: column;
     gap: 30px;
     text-align: center;
+    align-items: center;
   }
 
   .footer-contact,
   .footer-social {
     text-align: center;
+    width: 100%;
+  }
+  
+  .contact-info {
+    align-items: center;
+  }
+  
+  .social-container {
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
   }
 
   .social-links {
