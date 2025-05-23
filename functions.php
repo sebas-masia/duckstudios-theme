@@ -186,71 +186,6 @@ function duck_studios_register_taxonomies() {
 }
 add_action('init', 'duck_studios_register_taxonomies');
 
-// Add ACF options page
-if (function_exists('acf_add_options_page')) {
-    acf_add_options_page(array(
-        'page_title' => 'Theme Settings',
-        'menu_title' => 'Theme Settings',
-        'menu_slug' => 'theme-settings',
-        'capability' => 'edit_posts',
-        'redirect' => false
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Hero Section',
-        'menu_title' => 'Hero Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Services Section',
-        'menu_title' => 'Services Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Results Section',
-        'menu_title' => 'Results Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Testimonials Section',
-        'menu_title' => 'Testimonials Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Choose Us Section',
-        'menu_title' => 'Choose Us Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Methodology Section',
-        'menu_title' => 'Methodology Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'FAQ Section',
-        'menu_title' => 'FAQ Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Contact Section',
-        'menu_title' => 'Contact Section',
-        'parent_slug' => 'theme-settings',
-    ));
-    
-    acf_add_options_sub_page(array(
-        'page_title' => 'Footer Settings',
-        'menu_title' => 'Footer Settings',
-        'parent_slug' => 'theme-settings',
-    ));
-}
-
 // ACF JSON save point
 function duck_studios_acf_json_save_point($path) {
     return get_stylesheet_directory() . '/acf-json';
@@ -354,15 +289,73 @@ function duck_studios_process_contact_form() {
                 update_post_meta($post_id, 'formatted_data', $formatted_data);
                 
                 // Send email notification
-                $admin_email = get_option('admin_email');
-                $subject = 'New Contact Form Submission';
-                $message = "New contact form submission from: " . $form_data['full_name'] . "\n\n";
+                $recipient_email = 'info@duckstudios.net';
+                
+                $site_name = get_bloginfo('name');
+                $subject = '[' . $site_name . '] New Contact Form Submission: ' . $form_data['full_name'] . ' - ' . $form_data['company'];
+                
+                // Build HTML email
+                $message_html = '<html><body>';
+                $message_html .= '<h2>New Contact Form Submission</h2>';
+                $message_html .= '<p><strong>Submitted on:</strong> ' . date('F j, Y, g:i a') . '</p>';
+                $message_html .= '<table style="width: 100%; border-collapse: collapse;">';
+                
                 foreach ($form_data as $field => $value) {
-                    $message .= ucfirst(str_replace('_', ' ', $field)) . ": " . $value . "\n";
+                    if (!empty($value)) {
+                        $field_name = ucfirst(str_replace('_', ' ', $field));
+                        $message_html .= '<tr style="border-bottom: 1px solid #eee;">';
+                        $message_html .= '<th style="padding: 8px; text-align: left; width: 30%;">' . $field_name . ':</th>';
+                        $message_html .= '<td style="padding: 8px;">' . esc_html($value) . '</td>';
+                        $message_html .= '</tr>';
+                    }
                 }
                 
-                $headers = array('Content-Type: text/plain; charset=UTF-8');
-                wp_mail($admin_email, $subject, $message, $headers);
+                $message_html .= '</table>';
+                $message_html .= '<p style="margin-top: 20px;">This submission has been saved to your WordPress admin area.</p>';
+                $message_html .= '</body></html>';
+                
+                // Plain text version for email clients that don't support HTML
+                $message_plain = "New contact form submission from: " . $form_data['full_name'] . "\n\n";
+                foreach ($form_data as $field => $value) {
+                    if (!empty($value)) {
+                        $message_plain .= ucfirst(str_replace('_', ' ', $field)) . ": " . $value . "\n";
+                    }
+                }
+                
+                // Headers
+                $headers = array(
+                    'Content-Type: text/html; charset=UTF-8',
+                    'From: ' . $site_name . ' <' . get_option('admin_email') . '>',
+                    'Reply-To: ' . $form_data['full_name'] . ' <' . $form_data['email'] . '>'
+                );
+                
+                // Add debugging
+                error_log('Attempting to send email to: ' . $recipient_email);
+                error_log('Email subject: ' . $subject);
+                
+                // Try PHP's mail function as a fallback if wp_mail doesn't work
+                $mail_sent = wp_mail($recipient_email, $subject, $message_html, $headers);
+                
+                if (!$mail_sent) {
+                    error_log('wp_mail failed, trying PHP mail function');
+                    
+                    // Set mail headers for PHP mail function
+                    $php_headers = "MIME-Version: 1.0\r\n";
+                    $php_headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                    $php_headers .= "From: " . $site_name . " <" . get_option('admin_email') . ">\r\n";
+                    $php_headers .= "Reply-To: " . $form_data['full_name'] . " <" . $form_data['email'] . ">\r\n";
+                    
+                    // Send mail using PHP's mail function
+                    $mail_sent = mail($recipient_email, $subject, $message_html, $php_headers);
+                    
+                    if (!$mail_sent) {
+                        error_log('Both wp_mail and PHP mail failed to send the email');
+                    } else {
+                        error_log('Email sent successfully using PHP mail function');
+                    }
+                } else {
+                    error_log('Email sent successfully using wp_mail');
+                }
                 
                 // Clear session data
                 unset($_SESSION['contact_form_data']);
