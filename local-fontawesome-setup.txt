@@ -1,0 +1,33 @@
+## Local Font Awesome Setup Instructions
+
+### Step 1: Download Font Awesome
+1. Go to https://fontawesome.com/download
+2. Download the "Free for Web" version
+3. Extract the ZIP file
+
+### Step 2: Upload to your server
+1. In your theme folder, create: assets/fonts/fontawesome/
+2. From the downloaded FontAwesome folder, copy these folders to assets/fonts/fontawesome/:
+   - css/
+   - webfonts/
+
+### Step 3: Your folder structure should look like:
+```
+/wp-content/themes/duckstudios/
+├── assets/
+│   ├── fonts/
+│   │   └── fontawesome/
+│   │       ├── css/
+│   │       │   └── all.min.css
+│   │       └── webfonts/
+│   │           ├── fa-brands-400.woff2
+│   │           ├── fa-regular-400.woff2
+│   │           ├── fa-solid-900.woff2
+│   │           └── (other font files)
+│   ├── css/
+│   ├── js/
+│   └── images/
+```
+
+### Step 4: Update functions.php
+Replace the FontAwesome CDN line with the local version (see updated functions.php) 

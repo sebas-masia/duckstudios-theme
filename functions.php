@@ -66,8 +66,75 @@ function duck_studios_scripts() {
     // Enqueue Google Fonts
     wp_enqueue_style('duck-studios-fonts', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap', array(), null);
     
-    // Enqueue FontAwesome
-    wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
+    // Enqueue FontAwesome - Check for local first, then fallback to CDN
+    $local_fa_path = get_template_directory() . '/assets/fonts/fontawesome/css/all.min.css';
+    $local_fa_url = get_template_directory_uri() . '/assets/fonts/fontawesome/css/all.min.css';
+    
+    if (file_exists($local_fa_path)) {
+        // Use local FontAwesome if available
+        wp_enqueue_style('font-awesome', $local_fa_url, array(), DUCK_STUDIOS_VERSION);
+    } else {
+        // Fallback to CDN with multiple options
+        wp_enqueue_style('font-awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css', array(), '6.4.0');
+        
+        // Add fallback script to check if FontAwesome loaded
+        wp_add_inline_script('jquery', '
+            jQuery(document).ready(function($) {
+                setTimeout(function() {
+                    // Check if FontAwesome is loaded
+                    var testElement = $("<i class=\"fas fa-home\" style=\"display:none;\"></i>").appendTo("body");
+                    var computedStyle = window.getComputedStyle(testElement[0], ":before");
+                    var fontFamily = computedStyle.getPropertyValue("font-family");
+                    var isFALoaded = fontFamily && (fontFamily.indexOf("Font Awesome") !== -1 || fontFamily.indexOf("FontAwesome") !== -1);
+                    testElement.remove();
+                    
+                    if (!isFALoaded) {
+                        console.log("FontAwesome failed to load from primary CDN, trying fallbacks...");
+                        
+                        // Try cdnjs.cloudflare.com
+                        $("<link>", {
+                            rel: "stylesheet",
+                            type: "text/css",
+                            href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+                            crossorigin: "anonymous"
+                        }).appendTo("head");
+                        
+                        // Final fallback to use.fontawesome.com
+                        setTimeout(function() {
+                            var testElement2 = $("<i class=\"fas fa-home\" style=\"display:none;\"></i>").appendTo("body");
+                            var computedStyle2 = window.getComputedStyle(testElement2[0], ":before");
+                            var fontFamily2 = computedStyle2.getPropertyValue("font-family");
+                            var isFALoaded2 = fontFamily2 && (fontFamily2.indexOf("Font Awesome") !== -1 || fontFamily2.indexOf("FontAwesome") !== -1);
+                            testElement2.remove();
+                            
+                            if (!isFALoaded2) {
+                                console.log("Trying final FontAwesome fallback...");
+                                $("<link>", {
+                                    rel: "stylesheet",
+                                    type: "text/css", 
+                                    href: "https://use.fontawesome.com/releases/v6.4.0/css/all.css"
+                                }).appendTo("head");
+                                
+                                // If all CDNs fail, activate text fallbacks
+                                setTimeout(function() {
+                                    var testElement3 = $("<i class=\"fas fa-home\" style=\"display:none;\"></i>").appendTo("body");
+                                    var computedStyle3 = window.getComputedStyle(testElement3[0], ":before");
+                                    var fontFamily3 = computedStyle3.getPropertyValue("font-family");
+                                    var isFALoaded3 = fontFamily3 && (fontFamily3.indexOf("Font Awesome") !== -1 || fontFamily3.indexOf("FontAwesome") !== -1);
+                                    testElement3.remove();
+                                    
+                                    if (!isFALoaded3) {
+                                        console.log("All FontAwesome CDNs failed. Activating text fallbacks.");
+                                        $("body").addClass("fa-fallback-active");
+                                    }
+                                }, 3000);
+                            }
+                        }, 2000);
+                    }
+                }, 1000);
+            });
+        ');
+    }
     
     // Enqueue main stylesheet
     wp_enqueue_style('duck-studios-style', get_stylesheet_uri(), array(), DUCK_STUDIOS_VERSION);
@@ -77,6 +144,9 @@ function duck_studios_scripts() {
     wp_enqueue_style('duck-studios-results', get_template_directory_uri() . '/assets/css/sections/results.css', array(), DUCK_STUDIOS_VERSION);
     wp_enqueue_style('duck-studios-transitions', get_template_directory_uri() . '/assets/css/sections/transitions.css', array(), DUCK_STUDIOS_VERSION);
     wp_enqueue_style('duck-studios-carousel', get_template_directory_uri() . '/assets/css/carousel.css', array(), DUCK_STUDIOS_VERSION);
+    
+    // Enqueue FontAwesome fallback CSS
+    wp_enqueue_style('duck-studios-fontawesome-fallback', get_template_directory_uri() . '/assets/css/fontawesome-fallback.css', array(), DUCK_STUDIOS_VERSION);
     
     // Enqueue custom scripts
     wp_enqueue_script('duck-studios-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), DUCK_STUDIOS_VERSION, true);

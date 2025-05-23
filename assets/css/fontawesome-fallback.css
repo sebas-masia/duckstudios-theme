@@ -1,0 +1,106 @@
+/* Font Awesome Fallback CSS - displays text when icons don't load */
+
+/* Only show fallback text when Font Awesome is not loaded */
+.fa-fallback-active .fa-whatsapp::before,
+.fa-fallback-active .fa-brands.fa-whatsapp::before {
+    content: "WhatsApp" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-envelope::before,
+.fa-fallback-active .fa-solid.fa-envelope::before {
+    content: "Email" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-facebook-f::before,
+.fa-fallback-active .fa-brands.fa-facebook-f::before {
+    content: "FB" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-twitter::before,
+.fa-fallback-active .fa-brands.fa-twitter::before {
+    content: "Twitter" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-instagram::before,
+.fa-fallback-active .fa-brands.fa-instagram::before {
+    content: "IG" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-linkedin-in::before,
+.fa-fallback-active .fa-brands.fa-linkedin-in::before {
+    content: "LinkedIn" !important;
+    font-family: inherit !important;
+    font-size: 0.8em !important;
+    font-weight: bold !important;
+}
+
+.fa-fallback-active .fa-bars::before,
+.fa-fallback-active .fa-solid.fa-bars::before {
+    content: "☰" !important;
+    font-family: inherit !important;
+}
+
+.fa-fallback-active .fa-plus::before,
+.fa-fallback-active .fa-solid.fa-plus::before {
+    content: "+" !important;
+    font-family: inherit !important;
+}
+
+.fa-fallback-active .fa-minus::before,
+.fa-fallback-active .fa-solid.fa-minus::before {
+    content: "−" !important;
+    font-family: inherit !important;
+}
+
+.fa-fallback-active .fa-heart::before,
+.fa-fallback-active .fa-solid.fa-heart::before {
+    content: "♥" !important;
+    font-family: inherit !important;
+    color: red !important;
+}
+
+.fa-fallback-active .fa-user::before,
+.fa-fallback-active .fa-solid.fa-user::before {
+    content: "👤" !important;
+    font-family: inherit !important;
+}
+
+.fa-fallback-active .fa-chevron-left::before,
+.fa-fallback-active .fa-solid.fa-chevron-left::before {
+    content: "‹" !important;
+    font-family: inherit !important;
+}
+
+.fa-fallback-active .fa-chevron-right::before,
+.fa-fallback-active .fa-solid.fa-chevron-right::before {
+    content: "›" !important;
+    font-family: inherit !important;
+}
+
+/* Style adjustments for fallback text */
+.fa-fallback-active .fa {
+    font-style: normal !important;
+}
+
+/* WhatsApp button specific fallback */
+.fa-fallback-active .ds-whatsapp-btn i::before {
+    content: "WA" !important;
+    font-family: inherit !important;
+    font-weight: bold !important;
+    font-size: 0.7em !important;
+} 
