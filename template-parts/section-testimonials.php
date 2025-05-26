@@ -115,12 +115,12 @@
             <?php endif; ?>
             
             <?php if (get_field('testimonials_button_text', 'option')) : ?>
-            <a href="#contact" class="view-more-btn btn btn-outline">
+            <a href="https://www.instagram.com/p/C7VIzCMRQGO/?igsh=dDR2ZTQ5NWs0c2hx" class="view-more-btn btn btn-outline" target="_blank" rel="noopener noreferrer">
                 <?php echo esc_html(get_field('testimonials_button_text', 'option')); ?>
             </a>
             <?php else : ?>
             <div class="text-center">
-                <a href="#contact" class="view-more-btn btn btn-outline">Click Here</a>
+                <a href="https://www.instagram.com/p/C7VIzCMRQGO/?igsh=dDR2ZTQ5NWs0c2hx" class="view-more-btn btn btn-outline" target="_blank" rel="noopener noreferrer">Click Here</a>
             </div>
             <?php endif; ?>
         </div>

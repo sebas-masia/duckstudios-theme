@@ -44,9 +44,6 @@
 </section>
 
 <div class="client-logos-section">
-    <div class="site-background">
-        <div class="gradient-blob blob-blue"></div>
-    </div>
     <div class="logos-ticker-wrap">
         <div class="logos-ticker">
             <!-- First set of logos -->
