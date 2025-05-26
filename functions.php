@@ -18,7 +18,7 @@ function duck_studios_start_session() {
 add_action('init', 'duck_studios_start_session', 1);
 
 // Define theme version
-define('DUCK_STUDIOS_VERSION', '1.0.0');
+define('DUCK_STUDIOS_VERSION', '1.0.1');
 
 // Set up theme defaults and register support for various WordPress features
 function duck_studios_setup() {
