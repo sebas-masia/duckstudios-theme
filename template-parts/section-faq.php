@@ -39,24 +39,32 @@
                 // Fallback FAQs if none are set up yet
                 $fallback_faqs = array(
                     array(
-                        'question' => 'How long does it typically take to see results?',
-                        'answer' => 'While every project is different, we typically start seeing measurable results within 30-60 days. Our approach focuses on sustainable growth rather than quick fixes, so the most significant results often come after 3-6 months of consistent strategy implementation.'
+                        'question' => 'What types of brands do you work with?',
+                        'answer' => 'We work with brands that are looking to grow strategically, creatively, and sustainably. Our sweet spot is partnering with businesses that understand marketing as a long-term investment—not just a short-term expense.'
                     ),
                     array(
-                        'question' => 'What makes Duck Studios different from other agencies?',
-                        'answer' => 'We integrate directly with your team, working as partners rather than external vendors. Our approach combines data-driven strategy with creative execution, and we focus on measurable results rather than vanity metrics.'
+                        'question' => 'What does your 360 marketing service include?',
+                        'answer' => 'It includes strategy, digital ads, graphic design, audiovisual content, social media management, brand activations, and performance tracking. If needed, we also develop landing pages, apps, automations, and other tech tools.'
                     ),
                     array(
-                        'question' => 'Do you offer ongoing support after project completion?',
-                        'answer' => 'Absolutely! We believe in building long-term relationships with our clients. We offer various support packages to ensure your digital assets continue to perform optimally and evolve with your business needs.'
+                        'question' => 'Do you offer fixed packages or custom services?',
+                        'answer' => 'We personalize every proposal. We don\'t believe in one-size-fits-all formulas—your brand is unique, and your strategy should be too.'
                     ),
                     array(
-                        'question' => 'How do you measure success for your projects?',
-                        'answer' => 'We establish clear KPIs at the beginning of each project based on your business objectives. These might include conversion rates, cost per acquisition, engagement metrics, or revenue growth. We provide regular reports tracking these metrics.'
+                        'question' => 'How long does it take to see results?',
+                        'answer' => 'It depends on the strategy. You\'ll usually start seeing visible results around months 2–3, but the strongest results are built from month 6 onward.'
                     ),
                     array(
-                        'question' => 'What industries do you specialize in?',
-                        'answer' => 'While we have experience across many sectors, we have particular expertise in e-commerce, SaaS, professional services, and consumer products. Our diverse team brings insights from various industries to create innovative solutions.'
+                        'question' => 'How do I know if Duck Studios is the right agency for my brand?',
+                        'answer' => 'If you\'re looking for a committed, creative, and strategic team that works as an extension of your business, we\'re probably the right fit. And if we\'re not, we\'ll be honest about that too 😉'
+                    ),
+                    array(
+                        'question' => 'Can I meet with you before signing up?',
+                        'answer' => 'Absolutely! You can schedule a free discovery call where we\'ll analyze your case and tell you if—and how—we can help.'
+                    ),
+                    array(
+                        'question' => 'Can you help me with just one part of the process (like design, ads, or content)?',
+                        'answer' => 'Yes. We offer standalone packages for specific services like audiovisual production, and we also provide custom quotes based on your goals and needs.'
                     ),
                 );
                 
