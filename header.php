@@ -82,7 +82,7 @@
                         // Fallback menu if no menu is assigned
                         ?>
                         <ul id="primary-menu" class="menu">
-                            <li class="menu-item"><a href="#about">About us</a></li>
+                            <li class="menu-item"><a href="#services">About us</a></li>
                             <li class="menu-item"><a href="#team">Our team</a></li>
                             <li class="menu-item"><a href="#services">Services</a></li>
                             <li class="menu-item"><a href="#portfolio">Portfolio</a></li>
