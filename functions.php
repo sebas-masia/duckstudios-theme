@@ -282,13 +282,15 @@ add_shortcode('contact_form', 'duck_studios_contact_form_shortcode');
 // Process contact form submission
 function duck_studios_process_contact_form() {
     if (isset($_POST['duck_studios_contact_submit'])) {
+        // Debug - log form submission
+        error_log('Form submitted at: ' . date('Y-m-d H:i:s'));
+        error_log('POST data: ' . print_r($_POST, true));
+        
         // Verify nonce
         if (!isset($_POST['duck_studios_contact_nonce']) || !wp_verify_nonce($_POST['duck_studios_contact_nonce'], 'duck_studios_contact_form')) {
+            error_log('Nonce verification failed');
             wp_die('Security check failed');
         }
-        
-        // Debug - log POST data
-        error_log('Form submitted with data: ' . print_r($_POST, true));
         
         // Initialize form data array with POST values
         $form_data = array(
@@ -304,6 +306,9 @@ function duck_studios_process_contact_form() {
             'additional_info' => isset($_POST['additional_info']) ? sanitize_textarea_field($_POST['additional_info']) : ''
         );
         
+        // Log the sanitized form data
+        error_log('Sanitized form data: ' . print_r($form_data, true));
+        
         $validation_errors = array();
         
         // Check required fields
@@ -314,148 +319,87 @@ function duck_studios_process_contact_form() {
             }
         }
         
-        // Validate email
-        if (!empty($form_data['email']) && !is_email($form_data['email'])) {
-            $validation_errors[] = 'Please enter a valid email address.';
-        }
-        
         // Store form data in session for persistence
         $_SESSION['contact_form_data'] = $form_data;
         
-        // If no validation errors, save to database
+        // If no validation errors, save to database and send email
         if (empty($validation_errors)) {
-            // Create a new form submission as a custom post type
+            // Create post
             $post_data = array(
                 'post_title'    => wp_strip_all_tags($form_data['full_name']) . ' - ' . date('Y-m-d H:i:s'),
                 'post_status'   => 'publish',
-                'post_type'     => 'contact_submission',
-                'post_content'  => '' // Empty content
+                'post_type'     => 'contact_submission'
             );
             
-            // Insert the post into the database
             $post_id = wp_insert_post($post_data);
             
             if (!is_wp_error($post_id)) {
-                // Save each field individually to make sure they're saved properly
-                update_post_meta($post_id, 'full_name', $form_data['full_name']);
-                update_post_meta($post_id, 'industry', $form_data['industry']);
-                update_post_meta($post_id, 'country_code', $form_data['country_code']);
-                update_post_meta($post_id, 'phone', $form_data['phone']);
-                update_post_meta($post_id, 'company', $form_data['company']);
-                update_post_meta($post_id, 'email', $form_data['email']);
-                update_post_meta($post_id, 'note', $form_data['note']);
-                update_post_meta($post_id, 'contact_method', $form_data['contact_method']);
-                update_post_meta($post_id, 'monthly_income', $form_data['monthly_income']);
-                update_post_meta($post_id, 'additional_info', $form_data['additional_info']);
-                
-                // Add timestamp
-                update_post_meta($post_id, 'submission_date', current_time('mysql'));
-                
-                // Create formatted data for display in admin
-                $formatted_data = '';
-                foreach ($form_data as $field => $value) {
-                    if (!empty($value)) {
-                        $formatted_data .= '<strong>' . ucfirst(str_replace('_', ' ', $field)) . ':</strong> ' . esc_html($value) . '<br>';
-                    }
+                // Save meta data and log submission
+                foreach ($form_data as $key => $value) {
+                    update_post_meta($post_id, $key, $value);
                 }
-                update_post_meta($post_id, 'formatted_data', $formatted_data);
                 
-                // Send email notification
-                $recipient_email = 'info@duckstudios.net';
+                duck_studios_log_form_submission($post_id, $form_data);
                 
-                $site_name = get_bloginfo('name');
-                $subject = '[' . $site_name . '] New Contact Form Submission: ' . $form_data['full_name'] . ' - ' . $form_data['company'];
+                // Set up multiple recipients
+                $to = array(
+                    'info@duckstudios.net',
+                    'sebastianmasia@gmail.com'
+                );
+                
+                $subject = 'New Contact Form Submission: ' . $form_data['full_name'] . ' - ' . $form_data['company'];
                 
                 // Build HTML email
-                $message_html = '<html><body>';
-                $message_html .= '<h2>New Contact Form Submission</h2>';
-                $message_html .= '<p><strong>Submitted on:</strong> ' . date('F j, Y, g:i a') . '</p>';
-                $message_html .= '<table style="width: 100%; border-collapse: collapse;">';
+                $message = '<html><body>';
+                $message .= '<h2>New Contact Form Submission</h2>';
+                $message .= '<p><strong>Submitted on:</strong> ' . date('F j, Y, g:i a') . '</p>';
+                $message .= '<table style="width: 100%; border-collapse: collapse;">';
                 
                 foreach ($form_data as $field => $value) {
                     if (!empty($value)) {
                         $field_name = ucfirst(str_replace('_', ' ', $field));
-                        $message_html .= '<tr style="border-bottom: 1px solid #eee;">';
-                        $message_html .= '<th style="padding: 8px; text-align: left; width: 30%;">' . $field_name . ':</th>';
-                        $message_html .= '<td style="padding: 8px;">' . esc_html($value) . '</td>';
-                        $message_html .= '</tr>';
+                        $message .= '<tr style="border-bottom: 1px solid #eee;">';
+                        $message .= '<th style="padding: 8px; text-align: left; width: 30%;">' . $field_name . ':</th>';
+                        $message .= '<td style="padding: 8px;">' . esc_html($value) . '</td>';
+                        $message .= '</tr>';
                     }
                 }
                 
-                $message_html .= '</table>';
-                $message_html .= '<p style="margin-top: 20px;">This submission has been saved to your WordPress admin area.</p>';
-                $message_html .= '</body></html>';
+                $message .= '</table>';
+                $message .= '</body></html>';
                 
-                // Plain text version for email clients that don't support HTML
-                $message_plain = "New contact form submission from: " . $form_data['full_name'] . "\n\n";
-                foreach ($form_data as $field => $value) {
-                    if (!empty($value)) {
-                        $message_plain .= ucfirst(str_replace('_', ' ', $field)) . ": " . $value . "\n";
-                    }
-                }
-                
-                // Headers
                 $headers = array(
                     'Content-Type: text/html; charset=UTF-8',
-                    'From: ' . $site_name . ' <' . get_option('admin_email') . '>',
+                    'From: Duck Studios <info@duckstudios.net>',
                     'Reply-To: ' . $form_data['full_name'] . ' <' . $form_data['email'] . '>'
                 );
                 
-                // Add debugging
-                error_log('Attempting to send email to: ' . $recipient_email);
-                error_log('Email subject: ' . $subject);
-                
-                // Try PHP's mail function as a fallback if wp_mail doesn't work
-                $mail_sent = wp_mail($recipient_email, $subject, $message_html, $headers);
-                
-                if (!$mail_sent) {
-                    error_log('wp_mail failed, trying PHP mail function');
-                    
-                    // Set mail headers for PHP mail function
-                    $php_headers = "MIME-Version: 1.0\r\n";
-                    $php_headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-                    $php_headers .= "From: " . $site_name . " <" . get_option('admin_email') . ">\r\n";
-                    $php_headers .= "Reply-To: " . $form_data['full_name'] . " <" . $form_data['email'] . ">\r\n";
-                    
-                    // Send mail using PHP's mail function
-                    $mail_sent = mail($recipient_email, $subject, $message_html, $php_headers);
-                    
+                // Send email to each recipient and log the results
+                $all_sent = true;
+                foreach ($to as $recipient) {
+                    $mail_sent = wp_mail($recipient, $subject, $message, $headers);
+                    error_log('Email sending attempt to ' . $recipient . ' result: ' . ($mail_sent ? 'Success' : 'Failed'));
                     if (!$mail_sent) {
-                        error_log('Both wp_mail and PHP mail failed to send the email');
-                    } else {
-                        error_log('Email sent successfully using PHP mail function');
+                        $all_sent = false;
                     }
-                } else {
-                    error_log('Email sent successfully using wp_mail');
                 }
+                
+                // Log overall email sending status
+                error_log('All emails sent successfully: ' . ($all_sent ? 'Yes' : 'No'));
                 
                 // Clear session data
                 unset($_SESSION['contact_form_data']);
-                
-                // Check if thank-you page exists, if not create it
-                $thank_you_page = get_page_by_path('thank-you');
-                if (!$thank_you_page) {
-                    // Create thank you page
-                    $page_data = array(
-                        'post_title'    => 'Thank You',
-                        'post_name'     => 'thank-you',
-                        'post_status'   => 'publish',
-                        'post_type'     => 'page',
-                        'post_content'  => '<!-- wp:paragraph --><p>Thank you for your submission! We will contact you shortly.</p><!-- /wp:paragraph -->'
-                    );
-                    wp_insert_post($page_data);
-                }
                 
                 // Redirect to thank you page
                 wp_redirect(home_url('/thank-you/'));
                 exit;
             } else {
-                // Redirect back with error
+                error_log('Failed to create post: ' . $post_id->get_error_message());
                 wp_redirect(add_query_arg('form_error', '1', '#contact'));
                 exit;
             }
         } else {
-            // Redirect back with error
+            error_log('Validation errors: ' . print_r($validation_errors, true));
             wp_redirect(add_query_arg('form_error', '1', '#contact'));
             exit;
         }
@@ -715,3 +659,187 @@ function duck_studios_add_whatsapp_button() {
     <?php
 }
 add_action('wp_footer', 'duck_studios_add_whatsapp_button', 999);
+
+/**
+ * Add settings page for contact form email configuration
+ */
+function duck_studios_add_admin_menu() {
+    add_options_page(
+        'Contact Form Settings',
+        'Contact Form',
+        'manage_options',
+        'duck-studios-contact',
+        'duck_studios_contact_options_page'
+    );
+}
+add_action('admin_menu', 'duck_studios_add_admin_menu');
+
+/**
+ * Configure SMTP for WordPress
+ */
+function duck_studios_configure_smtp($phpmailer) {
+    // Use WordPress default mail settings instead of SMTP
+    // This will use the server's default mail configuration
+    $phpmailer->isMail();
+    
+    // Set the from name and email
+    $phpmailer->FromName = 'Duck Studios';
+    $phpmailer->From = 'info@duckstudios.net';
+    
+    // Log mail attempts for debugging
+    error_log('Mail Configuration - ' . date('Y-m-d H:i:s'));
+    error_log('From: ' . $phpmailer->From);
+    error_log('FromName: ' . $phpmailer->FromName);
+}
+add_action('phpmailer_init', 'duck_studios_configure_smtp');
+
+// Extend the existing settings page to include SMTP settings
+function duck_studios_contact_options_page() {
+    // Check user capabilities
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    // Save settings if form was submitted
+    if (isset($_POST['duck_studios_contact_email'])) {
+        update_option('duck_studios_contact_email', sanitize_email($_POST['duck_studios_contact_email']));
+        
+        // Save SMTP settings
+        if (isset($_POST['smtp_host'])) {
+            update_option('duck_studios_smtp_host', sanitize_text_field($_POST['smtp_host']));
+            update_option('duck_studios_smtp_port', absint($_POST['smtp_port']));
+            update_option('duck_studios_smtp_user', sanitize_text_field($_POST['smtp_user']));
+            if (!empty($_POST['smtp_pass'])) {
+                update_option('duck_studios_smtp_pass', sanitize_text_field($_POST['smtp_pass']));
+            }
+        }
+        
+        echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
+    }
+    
+    $current_email = get_option('duck_studios_contact_email', get_option('admin_email'));
+    $smtp_host = get_option('duck_studios_smtp_host', 'mail.duckstudios.net');
+    $smtp_port = get_option('duck_studios_smtp_port', 465);
+    $smtp_user = get_option('duck_studios_smtp_user', '_mainaccount@duckstudios.net');
+    ?>
+    <div class="wrap">
+        <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+        <form action="" method="post">
+            <h2>Contact Form Settings</h2>
+            <table class="form-table">
+                <tr>
+                    <th scope="row">Contact Form Notification Email</th>
+                    <td>
+                        <input type="email" name="duck_studios_contact_email" value="<?php echo esc_attr($current_email); ?>" class="regular-text">
+                        <p class="description">Email address where contact form submissions will be sent. Defaults to admin email if left empty.</p>
+                    </td>
+                </tr>
+            </table>
+            
+            <h2>SMTP Settings</h2>
+            <table class="form-table">
+                <tr>
+                    <th scope="row">SMTP Host</th>
+                    <td>
+                        <input type="text" name="smtp_host" value="<?php echo esc_attr($smtp_host); ?>" class="regular-text">
+                        <p class="description">Your mail server: mail.duckstudios.net</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">SMTP Port</th>
+                    <td>
+                        <input type="number" name="smtp_port" value="<?php echo esc_attr($smtp_port); ?>" class="small-text">
+                        <p class="description">Secure SSL/TLS port: 465</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">SMTP Username</th>
+                    <td>
+                        <input type="text" name="smtp_user" value="<?php echo esc_attr($smtp_user); ?>" class="regular-text">
+                        <p class="description">Your email username: _mainaccount@duckstudios.net</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">SMTP Password</th>
+                    <td>
+                        <input type="password" name="smtp_pass" class="regular-text">
+                        <p class="description">Your cPanel password. Leave empty to keep existing password.</p>
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button('Save Settings'); ?>
+        </form>
+        
+        <div class="card">
+            <h2>Test Email Settings</h2>
+            <p>After saving your SMTP settings, you can send a test email to verify the configuration.</p>
+            <button type="button" class="button button-secondary" id="test-email">Send Test Email</button>
+            <span id="test-email-result"></span>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h2>Email Configuration Help</h2>
+            <p><strong>Your Secure SSL/TLS Settings:</strong></p>
+            <ul style="list-style-type: disc; margin-left: 20px;">
+                <li>SMTP Host: mail.duckstudios.net</li>
+                <li>SMTP Port: 465 (SSL/TLS)</li>
+                <li>Username: _mainaccount@duckstudios.net</li>
+                <li>Password: Your cPanel password</li>
+                <li>Authentication: Required</li>
+                <li>Security: SSL</li>
+            </ul>
+            <p><em>Note: These settings use secure SSL/TLS encryption for maximum security.</em></p>
+        </div>
+    </div>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        $('#test-email').click(function() {
+            var $button = $(this);
+            var $result = $('#test-email-result');
+            
+            $button.prop('disabled', true);
+            $result.html(' <em>Sending test email...</em>');
+            
+            $.post(ajaxurl, {
+                action: 'test_smtp_email'
+            }, function(response) {
+                if (response.success) {
+                    $result.html(' <span style="color: green;">✓ Test email sent successfully!</span>');
+                } else {
+                    $result.html(' <span style="color: red;">✗ Failed to send test email. Check your settings.</span>');
+                }
+                $button.prop('disabled', false);
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
+// Add AJAX handler for test email
+function duck_studios_test_smtp_email() {
+    $to = get_option('duck_studios_contact_email', get_option('admin_email'));
+    $subject = 'SMTP Test Email';
+    $message = 'This is a test email to verify your SMTP settings are working correctly.';
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    
+    $result = wp_mail($to, $subject, $message, $headers);
+    
+    wp_send_json_success($result);
+}
+add_action('wp_ajax_test_smtp_email', 'duck_studios_test_smtp_email');
+
+// Add this function to log all form submissions
+function duck_studios_log_form_submission($post_id, $form_data) {
+    $log_file = get_stylesheet_directory() . '/form-submissions.log';
+    $log_entry = date('Y-m-d H:i:s') . " - New submission:\n";
+    $log_entry .= "Post ID: " . $post_id . "\n";
+    foreach ($form_data as $key => $value) {
+        $log_entry .= $key . ": " . $value . "\n";
+    }
+    $log_entry .= "------------------------\n";
+    
+    error_log($log_entry);
+    @file_put_contents($log_file, $log_entry, FILE_APPEND);
+}
