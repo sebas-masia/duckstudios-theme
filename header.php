@@ -69,28 +69,15 @@
 
                 <nav id="site-navigation" class="main-navigation">
                     <?php
-                    // Check if a menu exists in the primary location
-                    if (has_nav_menu('primary')) {
-                        wp_nav_menu(
-                            array(
-                                'theme_location' => 'primary',
-                                'menu_id'        => 'primary-menu',
-                                'fallback_cb'    => false,
-                            )
-                        );
-                    } else {
-                        // Fallback menu if no menu is assigned
-                        ?>
-                        <ul id="primary-menu" class="menu">
-                            <li class="menu-item"><a href="#services">About us</a></li>
-                            <li class="menu-item"><a href="#team">Our team</a></li>
-                            <li class="menu-item"><a href="#services">Services</a></li>
-                            <li class="menu-item"><a href="#portfolio">Portfolio</a></li>
-                            <li class="menu-item"><a href="#contact" class="contact-btn">Contact Us</a></li>
-                        </ul>
-                        <?php
-                    }
+                    // Force use of fallback menu with correct anchor links
                     ?>
+                    <ul id="primary-menu" class="menu">
+                        <li class="menu-item"><a href="#about">About us</a></li>
+                        <li class="menu-item"><a href="#team">Our team</a></li>
+                        <li class="menu-item"><a href="#services">Services</a></li>
+                        <li class="menu-item"><a href="#portfolio">Portfolio</a></li>
+                        <li class="menu-item"><a href="#contact" class="contact-btn">Contact Us</a></li>
+                    </ul>
                 </nav><!-- #site-navigation -->
             </div>
         </div>
